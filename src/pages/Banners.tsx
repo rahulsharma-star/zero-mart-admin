@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Table, Button, Modal, Form, Input, InputNumber, Switch, Select, Space, Image, Popconfirm, message } from 'antd';
+import { Table, Button, Modal, Form, Input, InputNumber, Switch, Select, Space, Image, Tag, Popconfirm, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { api, unwrap, errMsg } from '../api/client';
+import { api, unwrap, errMsg, assetUrl } from '../api/client';
+import PageHeader from '../components/PageHeader';
+import ImageUpload from '../components/ImageUpload';
 
 export default function Banners() {
   const { t } = useTranslation();
@@ -24,6 +26,8 @@ export default function Banners() {
         image_url: v.image_url,
         action_type: v.action_type ?? 'none',
         action_value: v.action_value,
+        screen: v.screen ?? 'home',
+        position: v.position ?? 'top',
         sort_order: v.sort_order,
         is_active: v.is_active,
       };
@@ -48,25 +52,31 @@ export default function Banners() {
   const openEdit = (row?: any) => {
     setEditing(row ?? null);
     form.resetFields();
-    if (row) form.setFieldsValue({ title_en: row.title?.en, title_hi: row.title?.hi, image_url: row.image_url, action_type: row.action_type, action_value: row.action_value, sort_order: row.sort_order, is_active: row.is_active });
-    else form.setFieldsValue({ is_active: true, sort_order: 0, action_type: 'none' });
+    if (row) form.setFieldsValue({ title_en: row.title?.en, title_hi: row.title?.hi, image_url: row.image_url, action_type: row.action_type, action_value: row.action_value, screen: row.screen ?? 'home', position: row.position ?? 'top', sort_order: row.sort_order, is_active: row.is_active });
+    else form.setFieldsValue({ is_active: true, sort_order: 0, action_type: 'none', screen: 'home', position: 'top' });
     setOpen(true);
   };
 
   return (
     <div>
-      <div style={{ marginBottom: 16, textAlign: 'right' }}>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => openEdit()}>
-          {t('add')} {t('banners')}
-        </Button>
-      </div>
+      <PageHeader
+        title={t('banners')}
+        subtitle="Place promotional strips on any app screen & slot"
+        extra={
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => openEdit()}>
+            {t('add')} {t('banners')}
+          </Button>
+        }
+      />
       <Table
         rowKey="id"
         loading={isLoading}
         dataSource={data ?? []}
         columns={[
-          { title: '', dataIndex: 'image_url', width: 120, render: (u: string) => (u ? <Image src={u} width={100} height={50} style={{ borderRadius: 6, objectFit: 'cover' }} /> : null) },
+          { title: '', dataIndex: 'image_url', width: 120, render: (u: string) => (u ? <Image src={assetUrl(u)} width={100} height={50} style={{ borderRadius: 6, objectFit: 'cover' }} /> : null) },
           { title: 'Title', dataIndex: ['title', 'en'] },
+          { title: t('screen') || 'Screen', dataIndex: 'screen', render: (s: string) => <Tag>{s ?? 'home'}</Tag> },
+          { title: t('position') || 'Position', dataIndex: 'position', render: (p: string) => <Tag color="blue">{p ?? 'top'}</Tag> },
           { title: 'Action', dataIndex: 'action_type' },
           { title: 'Sort', dataIndex: 'sort_order' },
           {
@@ -86,7 +96,23 @@ export default function Banners() {
         <Form form={form} layout="vertical" onFinish={(v) => save.mutate(v)}>
           <Form.Item name="title_en" label="Title (English)"><Input /></Form.Item>
           <Form.Item name="title_hi" label="Title (Hindi)"><Input /></Form.Item>
-          <Form.Item name="image_url" label={t('image_url')} rules={[{ required: true }]}><Input placeholder="https://..." /></Form.Item>
+          <Form.Item name="image_url" label={t('image_url')} rules={[{ required: true, message: 'Please upload an image' }]}>
+            <ImageUpload height={120} />
+          </Form.Item>
+          <Space style={{ display: 'flex' }} align="start">
+            <Form.Item name="screen" label="Screen" style={{ flex: 1 }} tooltip="Which app screen this promo appears on">
+              <Select
+                style={{ minWidth: 150 }}
+                options={['home', 'category', 'cart', 'checkout', 'orders', 'profile'].map((x) => ({ value: x, label: x }))}
+              />
+            </Form.Item>
+            <Form.Item name="position" label="Position" style={{ flex: 1 }} tooltip="Slot within the screen">
+              <Select
+                style={{ minWidth: 150 }}
+                options={['top', 'middle', 'bottom', 'footer'].map((x) => ({ value: x, label: x }))}
+              />
+            </Form.Item>
+          </Space>
           <Form.Item name="action_type" label="Action">
             <Select options={['none', 'category', 'product', 'url'].map((x) => ({ value: x, label: x }))} />
           </Form.Item>

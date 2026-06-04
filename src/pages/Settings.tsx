@@ -3,6 +3,7 @@ import { Card, Form, InputNumber, Input, Button, message, Divider } from 'antd';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { api, unwrap, errMsg } from '../api/client';
+import PageHeader from '../components/PageHeader';
 
 export default function Settings() {
   const { t } = useTranslation();
@@ -20,6 +21,7 @@ export default function Settings() {
         delivery_fee: data.delivery_fee,
         free_delivery_above: data.free_delivery_above,
         min_order_value: data.min_order_value,
+        urgent_fee: data.urgent_fee,
         support_phone: data.support_phone,
       });
       setRaw(JSON.stringify(data.store ?? {}, null, 2));
@@ -44,11 +46,14 @@ export default function Settings() {
   };
 
   return (
-    <Card title={t('settings')} style={{ maxWidth: 560 }}>
+    <div>
+      <PageHeader title={t('settings')} subtitle="Global defaults used when a region has no override" />
+      <Card style={{ maxWidth: 560 }}>
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item name="delivery_fee" label="Delivery fee (₹)"><InputNumber min={0} style={{ width: '100%' }} /></Form.Item>
         <Form.Item name="free_delivery_above" label="Free delivery above (₹)"><InputNumber min={0} style={{ width: '100%' }} /></Form.Item>
         <Form.Item name="min_order_value" label="Minimum order value (₹)"><InputNumber min={0} style={{ width: '100%' }} /></Form.Item>
+        <Form.Item name="urgent_fee" label="Urgent / express fee (₹)"><InputNumber min={0} style={{ width: '100%' }} /></Form.Item>
         <Form.Item name="support_phone" label="Support phone"><Input /></Form.Item>
         <Divider>Store info (JSON, multilingual)</Divider>
         <Input.TextArea rows={6} value={raw} onChange={(e) => setRaw(e.target.value)} style={{ fontFamily: 'monospace' }} />
@@ -56,6 +61,7 @@ export default function Settings() {
           {t('save')}
         </Button>
       </Form>
-    </Card>
+      </Card>
+    </div>
   );
 }

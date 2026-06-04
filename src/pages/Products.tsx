@@ -16,7 +16,9 @@ import {
 import { PlusOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { api, unwrap, errMsg } from '../api/client';
+import { api, unwrap, errMsg, assetUrl } from '../api/client';
+import PageHeader from '../components/PageHeader';
+import ImageUpload from '../components/ImageUpload';
 
 export default function Products() {
   const { t } = useTranslation();
@@ -96,11 +98,15 @@ export default function Products() {
 
   return (
     <div>
-      <div style={{ marginBottom: 16, textAlign: 'right' }}>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => openEdit()}>
-          {t('add')} {t('products')}
-        </Button>
-      </div>
+      <PageHeader
+        title={t('products')}
+        subtitle="Manage your catalog — names, pricing and stock"
+        extra={
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => openEdit()}>
+            {t('add')} {t('products')}
+          </Button>
+        }
+      />
       <Table
         rowKey="id"
         loading={isLoading}
@@ -110,7 +116,7 @@ export default function Products() {
             title: '',
             dataIndex: 'image_url',
             width: 64,
-            render: (url: string) => (url ? <Image src={url} width={44} height={44} style={{ objectFit: 'cover', borderRadius: 6 }} /> : null),
+            render: (url: string) => (url ? <Image src={assetUrl(url)} width={44} height={44} style={{ objectFit: 'cover', borderRadius: 6 }} /> : null),
           },
           { title: t('name_en'), dataIndex: ['name', 'en'] },
           { title: t('category'), dataIndex: 'category_id', render: catName },
@@ -184,7 +190,7 @@ export default function Products() {
             </Form.Item>
           </Space>
           <Form.Item name="image_url" label={t('image_url')}>
-            <Input placeholder="https://..." />
+            <ImageUpload height={140} />
           </Form.Item>
           <Form.Item name="is_active" label={t('active')} valuePropName="checked">
             <Switch />

@@ -43,14 +43,15 @@ export default function Login() {
   };
 
   return (
-    <div style={{ display: 'grid', placeItems: 'center', height: '100vh', background: '#f0f2f5' }}>
-      <Card style={{ width: 380 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr', placeItems: 'center', minHeight: '100vh', background: 'radial-gradient(1200px 600px at 0% 0%, #e7f6ee 0%, #f4f6f8 45%)', padding: 24 }}>
+      <Card style={{ width: 400, borderRadius: 18, boxShadow: '0 12px 40px rgba(16,24,40,0.10)' }} styles={{ body: { padding: 32 } }}>
         <Space direction="vertical" size="large" style={{ width: '100%' }}>
           <div style={{ textAlign: 'center' }}>
-            <Typography.Title level={2} style={{ color: '#0f9d58', margin: 0 }}>
-              ● Zero
+            <div style={{ width: 56, height: 56, borderRadius: 16, margin: '0 auto 12px', background: 'linear-gradient(135deg,#0f9d58,#16a34a)', display: 'grid', placeItems: 'center', color: '#fff', fontWeight: 800, fontSize: 28, boxShadow: '0 8px 20px rgba(15,157,88,0.35)' }}>Z</div>
+            <Typography.Title level={3} style={{ margin: 0, color: '#111827' }}>
+              Zero Admin
             </Typography.Title>
-            <Typography.Text type="secondary">{t('app')}</Typography.Text>
+            <Typography.Text type="secondary">Sign in to your console</Typography.Text>
           </div>
 
           {step === 'phone' ? (

@@ -4,6 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { api, unwrap, errMsg } from '../api/client';
+import PageHeader from '../components/PageHeader';
 
 export default function Regions() {
   const { t } = useTranslation();
@@ -25,11 +26,15 @@ export default function Regions() {
 
   return (
     <div>
-      <div style={{ marginBottom: 16, textAlign: 'right' }}>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => { form.resetFields(); form.setFieldsValue({ currency: 'INR', is_active: true }); setOpen(true); }}>
-          {t('add')} {t('regions')}
-        </Button>
-      </div>
+      <PageHeader
+        title={t('regions')}
+        subtitle="Delivery zones, pricing, urgent fee & serviceable pincodes"
+        extra={
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => { form.resetFields(); form.setFieldsValue({ currency: 'INR', is_active: true }); setOpen(true); }}>
+            {t('add')} {t('regions')}
+          </Button>
+        }
+      />
       <Table
         rowKey="id"
         loading={isLoading}
@@ -104,6 +109,7 @@ function RegionDrawer({ region, onClose }: { region: any; onClose: () => void })
             surge_multiplier: Number(pricing?.surge_multiplier ?? 1),
             surge_active: pricing?.surge_active ?? false,
             promo_discount: Number(pricing?.promo_discount ?? 0),
+            urgent_fee: pricing?.urgent_fee != null ? Number(pricing.urgent_fee) : undefined,
           }}
           onFinish={(v) => savePricing.mutate(v)}
         >
@@ -114,6 +120,7 @@ function RegionDrawer({ region, onClose }: { region: any; onClose: () => void })
           <Form.Item name="surge_multiplier" label="Surge multiplier"><InputNumber min={1} step={0.1} style={{ width: '100%' }} /></Form.Item>
           <Form.Item name="surge_active" label="Surge active" valuePropName="checked"><Switch /></Form.Item>
           <Form.Item name="promo_discount" label="Promo discount (off fee)"><InputNumber min={0} style={{ width: '100%' }} /></Form.Item>
+          <Form.Item name="urgent_fee" label="Urgent / express fee" tooltip="Extra charge when a customer chooses urgent delivery. Leave blank to use the global default."><InputNumber min={0} style={{ width: '100%' }} placeholder="e.g. 30" /></Form.Item>
           <Button type="primary" htmlType="submit" loading={savePricing.isPending}>{t('save')}</Button>
         </Form>
       )}

@@ -7,6 +7,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { api, unwrap, errMsg } from '../api/client';
+import PageHeader from '../components/PageHeader';
 
 export default function DeliveryBoys() {
   const { t } = useTranslation();
@@ -55,11 +56,15 @@ export default function DeliveryBoys() {
 
   return (
     <div>
-      <div style={{ marginBottom: 16, textAlign: 'right' }}>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => openEdit()}>
-          {t('add')} {t('delivery_boys')}
-        </Button>
-      </div>
+      <PageHeader
+        title={t('delivery_boys')}
+        subtitle="Riders, payout rates and earnings"
+        extra={
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => openEdit()}>
+            {t('add')} {t('delivery_boys')}
+          </Button>
+        }
+      />
       <Table
         rowKey="id"
         loading={isLoading}

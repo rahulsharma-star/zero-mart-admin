@@ -73,6 +73,9 @@ const resources = {
       no_notifications: 'No notifications',
       repool: 'Re-pool (unassign)',
       assigned_to_boy_hint: 'Assigned to a delivery boy. If they are unresponsive, re-pool to reassign.',
+      urgent: 'Urgent',
+      screen: 'Screen',
+      position: 'Position',
     },
   },
   hi: {
@@ -146,6 +149,9 @@ const resources = {
       no_notifications: 'कोई सूचना नहीं',
       repool: 'दोबारा पूल करें (अनअसाइन)',
       assigned_to_boy_hint: 'डिलीवरी बॉय को असाइन है। अगर वो जवाब न दे, तो दोबारा असाइन करने के लिए re-pool करें।',
+      urgent: 'अर्जेंट',
+      screen: 'स्क्रीन',
+      position: 'स्थान',
     },
   },
 };

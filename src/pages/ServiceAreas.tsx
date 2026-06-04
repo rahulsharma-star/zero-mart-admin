@@ -4,6 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { api, unwrap, errMsg } from '../api/client';
+import PageHeader from '../components/PageHeader';
 
 export default function ServiceAreas() {
   const { t } = useTranslation();
@@ -36,11 +37,15 @@ export default function ServiceAreas() {
 
   return (
     <div>
-      <div style={{ marginBottom: 16, textAlign: 'right' }}>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => { form.resetFields(); form.setFieldsValue({ is_active: true }); setOpen(true); }}>
-          {t('add')} {t('service_areas')}
-        </Button>
-      </div>
+      <PageHeader
+        title={t('service_areas')}
+        subtitle="Pincodes you currently deliver to"
+        extra={
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => { form.resetFields(); form.setFieldsValue({ is_active: true }); setOpen(true); }}>
+            {t('add')} {t('service_areas')}
+          </Button>
+        }
+      />
       <Table
         rowKey="id"
         loading={isLoading}

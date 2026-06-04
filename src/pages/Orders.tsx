@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { api, unwrap, errMsg } from '../api/client';
 import { statusColor, ORDER_STATUSES } from '../utils/status';
+import PageHeader from '../components/PageHeader';
 
 export default function Orders() {
   const { t } = useTranslation();
@@ -62,6 +63,7 @@ export default function Orders() {
 
   return (
     <div>
+      <PageHeader title={t('orders')} subtitle="Track, update status and assign delivery" />
       <Table
         rowKey="id"
         loading={isLoading}
@@ -74,6 +76,7 @@ export default function Orders() {
             render: (no: string, row: any) => (
               <span>
                 {no}{' '}
+                {row.is_urgent && <Tag color="volcano">⚡ {t('urgent') || 'Urgent'}</Tag>}
                 {row.needs_reassign && <Tag color="red">⟳ {t('reassign_needed')}</Tag>}
               </span>
             ),
@@ -120,6 +123,12 @@ export default function Orders() {
               <Descriptions.Item label="Address">
                 {detail.data.address_line1}, {detail.data.address_city} - {detail.data.address_pincode}
               </Descriptions.Item>
+              {detail.data.is_urgent && (
+                <Descriptions.Item label={t('urgent') || 'Urgent'}>
+                  <Tag color="volcano">⚡ {t('urgent') || 'Urgent'}</Tag>
+                  {Number(detail.data.urgent_fee) > 0 && <span> +₹{Number(detail.data.urgent_fee).toFixed(2)}</span>}
+                </Descriptions.Item>
+              )}
               <Descriptions.Item label={t('total')}>₹{Number(detail.data.total).toFixed(2)}</Descriptions.Item>
             </Descriptions>
             <Typography.Title level={5} style={{ marginTop: 16 }}>
