@@ -23,6 +23,7 @@ export default function Settings() {
         min_order_value: data.min_order_value,
         urgent_fee: data.urgent_fee,
         support_phone: data.support_phone,
+        whatsapp_number: data.whatsapp_number,
       });
       setRaw(JSON.stringify(data.store ?? {}, null, 2));
     }
@@ -54,7 +55,9 @@ export default function Settings() {
         <Form.Item name="free_delivery_above" label="Free delivery above (₹)"><InputNumber min={0} style={{ width: '100%' }} /></Form.Item>
         <Form.Item name="min_order_value" label="Minimum order value (₹)"><InputNumber min={0} style={{ width: '100%' }} /></Form.Item>
         <Form.Item name="urgent_fee" label="Urgent / express fee (₹)"><InputNumber min={0} style={{ width: '100%' }} /></Form.Item>
-        <Form.Item name="support_phone" label="Support phone"><Input /></Form.Item>
+        <Divider>Customer support</Divider>
+        <Form.Item name="support_phone" label="Support / Call number" extra="Customers tap to call (e.g. +919876543210)"><Input placeholder="+91XXXXXXXXXX" /></Form.Item>
+        <Form.Item name="whatsapp_number" label="WhatsApp number" extra="Used for the WhatsApp chat & order-confirm button in the app"><Input placeholder="+91XXXXXXXXXX" /></Form.Item>
         <Divider>Store info (JSON, multilingual)</Divider>
         <Input.TextArea rows={6} value={raw} onChange={(e) => setRaw(e.target.value)} style={{ fontFamily: 'monospace' }} />
         <Button type="primary" htmlType="submit" loading={save.isPending} style={{ marginTop: 16 }}>
