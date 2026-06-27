@@ -12,6 +12,7 @@ import {
   LogoutOutlined,
   CarOutlined,
   GlobalOutlined,
+  ShopOutlined,
   BellOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -63,14 +64,27 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const loc = useLocation();
   const { logout, user } = useAuth();
 
+  const isVendor = user?.role === 'vendor';
+
+  // Vendors get a focused menu scoped to their own shop.
+  const vendorItems = [
+    { type: 'group' as const, label: 'My Shop', children: [
+      { key: '/', icon: <DashboardOutlined />, label: t('dashboard') },
+      { key: '/orders', icon: <ProfileOutlined />, label: t('orders') },
+      { key: '/products', icon: <ShoppingOutlined />, label: t('products') },
+      { key: '/banners', icon: <PictureOutlined />, label: t('banners') },
+    ]},
+  ];
+
   // Grouped navigation for a more "product" feel.
-  const items = [
+  const adminItems = [
     { type: 'group' as const, label: 'Overview', children: [
       { key: '/', icon: <DashboardOutlined />, label: t('dashboard') },
       { key: '/orders', icon: <ProfileOutlined />, label: t('orders') },
     ]},
     { type: 'group' as const, label: 'Catalog', children: [
       { key: '/products', icon: <ShoppingOutlined />, label: t('products') },
+      { key: '/stores', icon: <ShopOutlined />, label: 'Shops' },
       { key: '/categories', icon: <AppstoreOutlined />, label: t('categories') },
       { key: '/banners', icon: <PictureOutlined />, label: t('banners') },
     ]},
@@ -85,9 +99,11 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     ]},
   ];
 
+  const items = isVendor ? vendorItems : adminItems;
+
   // Flat lookup for the header title (current page name).
   const flat: Record<string, string> = {
-    '/': t('dashboard'), '/orders': t('orders'), '/products': t('products'),
+    '/': t('dashboard'), '/orders': t('orders'), '/products': t('products'), '/stores': 'Shops',
     '/categories': t('categories'), '/banners': t('banners'), '/delivery-boys': t('delivery_boys'),
     '/regions': t('regions'), '/service-areas': t('service_areas'), '/users': t('customers'),
     '/settings': t('settings'),
@@ -175,7 +191,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                 <div style={{ lineHeight: 1.1 }}>
                   <div style={{ fontWeight: 600, fontSize: 13 }}>{user?.name ?? 'Admin'}</div>
                   <Tag color="green" style={{ marginTop: 2, fontSize: 10, lineHeight: '16px', padding: '0 6px' }}>
-                    Administrator
+                    {isVendor ? 'Vendor' : 'Administrator'}
                   </Tag>
                 </div>
               </Space>

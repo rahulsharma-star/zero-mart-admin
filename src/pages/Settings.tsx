@@ -24,6 +24,7 @@ export default function Settings() {
         urgent_fee: data.urgent_fee,
         support_phone: data.support_phone,
         whatsapp_number: data.whatsapp_number,
+        default_commission_rate: data.default_commission_rate,
       });
       setRaw(JSON.stringify(data.store ?? {}, null, 2));
     }
@@ -55,6 +56,7 @@ export default function Settings() {
         <Form.Item name="free_delivery_above" label="Free delivery above (₹)"><InputNumber min={0} style={{ width: '100%' }} /></Form.Item>
         <Form.Item name="min_order_value" label="Minimum order value (₹)"><InputNumber min={0} style={{ width: '100%' }} /></Form.Item>
         <Form.Item name="urgent_fee" label="Urgent / express fee (₹)"><InputNumber min={0} style={{ width: '100%' }} /></Form.Item>
+        <Form.Item name="default_commission_rate" label="Default commission (%)" extra="Used when a shop has no custom rate"><InputNumber min={0} max={100} style={{ width: '100%' }} /></Form.Item>
         <Divider>Customer support</Divider>
         <Form.Item name="support_phone" label="Support / Call number" extra="Customers tap to call (e.g. +919876543210)"><Input placeholder="+91XXXXXXXXXX" /></Form.Item>
         <Form.Item name="whatsapp_number" label="WhatsApp number" extra="Used for the WhatsApp chat & order-confirm button in the app"><Input placeholder="+91XXXXXXXXXX" /></Form.Item>

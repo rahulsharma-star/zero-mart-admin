@@ -5,7 +5,7 @@ interface User {
   id: string;
   phone: string;
   name: string | null;
-  role: 'customer' | 'admin' | 'delivery';
+  role: 'customer' | 'admin' | 'delivery' | 'vendor';
 }
 
 interface AuthState {

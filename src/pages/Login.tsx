@@ -30,7 +30,7 @@ export default function Login() {
     try {
       const res = await api.post('/auth/otp/verify', { phone, code: otp });
       const { token, user } = unwrap(res);
-      if (user.role !== 'admin') {
+      if (user.role !== 'admin' && user.role !== 'vendor') {
         message.error(t('only_admin'));
         return;
       }

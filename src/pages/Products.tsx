@@ -35,15 +35,21 @@ export default function Products() {
     queryKey: ['admin-categories'],
     queryFn: async () => unwrap(await api.get('/admin/categories')),
   });
+  const { data: shops } = useQuery({
+    queryKey: ['admin-stores'],
+    queryFn: async () => unwrap(await api.get('/admin/stores')),
+  });
 
   const save = useMutation({
     mutationFn: async (values: any) => {
       const payload = {
+        store_id: values.store_id,
         category_id: values.category_id ?? null,
         name: { en: values.name_en, hi: values.name_hi },
         description: { en: values.desc_en, hi: values.desc_hi },
         unit: values.unit,
         price: values.price,
+        extra_charge: values.extra_charge ?? 0,
         mrp: values.mrp,
         stock: values.stock,
         image_url: values.image_url,
@@ -79,10 +85,12 @@ export default function Products() {
         desc_hi: row.description?.hi,
         unit: row.unit,
         price: Number(row.price),
+        extra_charge: row.extra_charge ? Number(row.extra_charge) : 0,
         mrp: row.mrp ? Number(row.mrp) : undefined,
         stock: row.stock,
         image_url: row.image_url,
         category_id: row.category_id,
+        store_id: row.store_id,
         is_active: row.is_active,
       });
     } else {
@@ -95,6 +103,8 @@ export default function Products() {
     const c = (cats ?? []).find((x: any) => x.id === id);
     return c ? c.name?.en : '-';
   };
+
+  const shopName = (id: string) => (shops ?? []).find((s: any) => s.id === id)?.name ?? '—';
 
   return (
     <div>
@@ -119,6 +129,7 @@ export default function Products() {
             render: (url: string) => (url ? <Image src={assetUrl(url)} width={44} height={44} style={{ objectFit: 'cover', borderRadius: 6 }} /> : null),
           },
           { title: t('name_en'), dataIndex: ['name', 'en'] },
+          { title: 'Shop', dataIndex: 'store_id', render: shopName },
           { title: t('category'), dataIndex: 'category_id', render: catName },
           { title: t('unit'), dataIndex: 'unit' },
           { title: t('price'), dataIndex: 'price', render: (v: string) => `₹${Number(v).toFixed(2)}` },
@@ -167,6 +178,9 @@ export default function Products() {
               <Input.TextArea rows={2} />
             </Form.Item>
           </Space>
+          <Form.Item name="store_id" label="Shop" rules={[{ required: true }]}>
+            <Select options={(shops ?? []).map((s: any) => ({ value: s.id, label: s.name }))} />
+          </Form.Item>
           <Space style={{ display: 'flex' }} align="start">
             <Form.Item name="category_id" label={t('category')} style={{ flex: 1, minWidth: 180 }}>
               <Select
@@ -180,6 +194,9 @@ export default function Products() {
           </Space>
           <Space>
             <Form.Item name="price" label={t('price')} rules={[{ required: true }]}>
+              <InputNumber min={0} prefix="₹" />
+            </Form.Item>
+            <Form.Item name="extra_charge" label="Extra charge" tooltip="Vendor markup added on top of the base price. Customer pays price + extra charge.">
               <InputNumber min={0} prefix="₹" />
             </Form.Item>
             <Form.Item name="mrp" label={t('mrp')}>

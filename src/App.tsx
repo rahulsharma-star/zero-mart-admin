@@ -12,7 +12,12 @@ import Banners from './pages/Banners';
 import ServiceAreas from './pages/ServiceAreas';
 import Settings from './pages/Settings';
 import DeliveryBoys from './pages/DeliveryBoys';
+import Stores from './pages/Stores';
 import Regions from './pages/Regions';
+import VendorDashboard from './pages/vendor/VendorDashboard';
+import VendorProducts from './pages/vendor/VendorProducts';
+import VendorOrders from './pages/vendor/VendorOrders';
+import VendorBanners from './pages/vendor/VendorBanners';
 
 export default function App() {
   const { user, loading } = useAuth();
@@ -34,6 +39,20 @@ export default function App() {
     );
   }
 
+  if (user.role === 'vendor') {
+    return (
+      <AppLayout>
+        <Routes>
+          <Route path="/" element={<VendorDashboard />} />
+          <Route path="/orders" element={<VendorOrders />} />
+          <Route path="/products" element={<VendorProducts />} />
+          <Route path="/banners" element={<VendorBanners />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AppLayout>
+    );
+  }
+
   return (
     <AppLayout>
       <Routes>
@@ -42,6 +61,7 @@ export default function App() {
         <Route path="/categories" element={<Categories />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/delivery-boys" element={<DeliveryBoys />} />
+        <Route path="/stores" element={<Stores />} />
         <Route path="/regions" element={<Regions />} />
         <Route path="/users" element={<Users />} />
         <Route path="/banners" element={<Banners />} />

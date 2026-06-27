@@ -49,6 +49,21 @@ export default function Banners() {
     },
   });
 
+  // approve | reject | home (push to home)
+  const act = useMutation({
+    mutationFn: ({ id, action }: { id: string; action: string }) => api.post(`/admin/banners/${id}/${action}`),
+    onSuccess: () => {
+      message.success(t('saved'));
+      qc.invalidateQueries({ queryKey: ['admin-banners'] });
+    },
+    onError: (e) => message.error(errMsg(e)),
+  });
+
+  const statusTag = (s: string) => {
+    const color = s === 'approved' ? 'green' : s === 'pending' ? 'orange' : 'red';
+    return <Tag color={color}>{s ?? 'approved'}</Tag>;
+  };
+
   const openEdit = (row?: any) => {
     setEditing(row ?? null);
     form.resetFields();
@@ -75,14 +90,23 @@ export default function Banners() {
         columns={[
           { title: '', dataIndex: 'image_url', width: 120, render: (u: string) => (u ? <Image src={assetUrl(u)} width={100} height={50} style={{ borderRadius: 6, objectFit: 'cover' }} /> : null) },
           { title: 'Title', dataIndex: ['title', 'en'] },
-          { title: t('screen') || 'Screen', dataIndex: 'screen', render: (s: string) => <Tag>{s ?? 'home'}</Tag> },
-          { title: t('position') || 'Position', dataIndex: 'position', render: (p: string) => <Tag color="blue">{p ?? 'top'}</Tag> },
-          { title: 'Action', dataIndex: 'action_type' },
+          { title: 'Shop', dataIndex: 'store_name', render: (s: string) => s || <span style={{ color: '#999' }}>Admin</span> },
+          { title: 'Where', dataIndex: 'placement', render: (p: string) => <Tag color={p === 'home' ? 'gold' : 'blue'}>{p ?? 'home'}</Tag> },
+          { title: 'Status', dataIndex: 'status', render: (s: string) => statusTag(s) },
           { title: 'Sort', dataIndex: 'sort_order' },
           {
             title: '',
             render: (row: any) => (
-              <Space>
+              <Space wrap>
+                {row.status === 'pending' && (
+                  <>
+                    <Button size="small" type="primary" onClick={() => act.mutate({ id: row.id, action: 'approve' })}>Approve</Button>
+                    <Button size="small" danger onClick={() => act.mutate({ id: row.id, action: 'reject' })}>Reject</Button>
+                  </>
+                )}
+                {row.placement !== 'home' && (
+                  <Button size="small" onClick={() => act.mutate({ id: row.id, action: 'home' })}>Push to home</Button>
+                )}
                 <Button size="small" onClick={() => openEdit(row)}>{t('edit')}</Button>
                 <Popconfirm title={t('delete') + '?'} onConfirm={() => del.mutate(row.id)}>
                   <Button size="small" danger>{t('delete')}</Button>
